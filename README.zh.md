@@ -108,7 +108,7 @@ cargo install --git https://github.com/asm2apex/ccpulse
 cargo build --release
 ```
 
-需要 Rust 1.74 及以上。
+需要 Rust 1.85 及以上(使用 2024 edition)。
 
 ## 许可
 

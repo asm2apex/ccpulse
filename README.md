@@ -120,7 +120,7 @@ scan; everything that needs scanning is one file.
 cargo build --release
 ```
 
-Requires Rust 1.74 or newer.
+Requires Rust 1.85 or newer (uses the 2024 edition).
 
 ## License
 
