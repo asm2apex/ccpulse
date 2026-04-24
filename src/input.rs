@@ -45,7 +45,9 @@ pub struct Cost {
     pub total_duration_ms: Option<u64>,
     #[allow(dead_code)]
     pub total_api_duration_ms: Option<u64>,
+    #[allow(dead_code)]
     pub total_lines_added: Option<u64>,
+    #[allow(dead_code)]
     pub total_lines_removed: Option<u64>,
 }
 
