@@ -10,6 +10,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashSet;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
@@ -135,6 +136,9 @@ pub fn collect_records() -> Vec<(i64, f64)> {
 
     let cutoff = now - RECORDS_LOOKBACK_SEC;
     let mut records: Vec<(i64, f64)> = Vec::with_capacity(2048);
+    // Resumed sessions / sub-session transcripts duplicate the same
+    // assistant message in multiple JSONL files. Dedup by message id.
+    let mut seen: HashSet<String> = HashSet::with_capacity(2048);
     let projects = home_dir().join(".claude/projects");
     let dirs = match fs::read_dir(&projects) {
         Ok(d) => d,
@@ -190,6 +194,11 @@ pub fn collect_records() -> Vec<(i64, f64)> {
                 };
                 if msg.get("role").and_then(|r| r.as_str()) != Some("assistant") {
                     continue;
+                }
+                if let Some(id) = msg.get("id").and_then(|x| x.as_str()) {
+                    if !seen.insert(id.to_string()) {
+                        continue;
+                    }
                 }
                 let usage = match msg.get("usage") {
                     Some(u) => u,
