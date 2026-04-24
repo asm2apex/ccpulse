@@ -269,8 +269,10 @@ fn fmt_window(label: &str, w: &crate::input::RateLimitWindow, now: i64) -> Strin
 }
 
 fn color_pct(pct: f64) -> &'static str {
-    if pct > 60.0 {
+    if pct >= 80.0 {
         FG_RED
+    } else if pct >= 60.0 {
+        FG_YELLOW
     } else {
         FG_GREEN
     }
