@@ -1,6 +1,6 @@
 [package]
 name = "ccpulse"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["asm2apex"]
 description = "Statusline for Claude Code: model, tokens, context window, and 5h/7d quota usage"
