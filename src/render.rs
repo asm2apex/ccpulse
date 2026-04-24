@@ -50,11 +50,6 @@ pub fn render(input: &Input) -> String {
         .and_then(|o| o.name.as_deref())
         .unwrap_or("");
     let effort_level = input.effort.as_ref().and_then(|e| e.level.as_deref());
-    let thinking_on = input
-        .thinking
-        .as_ref()
-        .and_then(|t| t.enabled)
-        .unwrap_or(false);
     let fast = input.fast_mode.unwrap_or(false);
 
     let user = std::env::var("USER").unwrap_or_else(|_| "user".into());
@@ -108,9 +103,6 @@ pub fn render(input: &Input) -> String {
     if let Some(e) = effort_level {
         let _ = write!(out, " {}effort:{}{}{}{}", DIM, RESET, FG_YELLOW, e, RESET);
     }
-    if thinking_on {
-        let _ = write!(out, " {}thinking{}", DIM, RESET);
-    }
     if fast {
         let _ = write!(out, " {}fast{}", DIM, RESET);
     }
@@ -118,7 +110,7 @@ pub fn render(input: &Input) -> String {
         let _ = write!(out, " {}[{}]{}", DIM, style, RESET);
     }
     let v = crate::version::status();
-    let _ = write!(out, " {}v{}{}", DIM, v.current, RESET);
+    let _ = write!(out, " {}ccpulse: v{}{}", DIM, v.current, RESET);
     if v.update_available {
         if let Some(latest) = v.latest.as_deref() {
             let tag = latest.trim_start_matches('v');

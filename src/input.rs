@@ -13,6 +13,7 @@ pub struct Input {
     pub context_window: Option<ContextWindow>,
     pub rate_limits: Option<RateLimits>,
     pub effort: Option<Effort>,
+    #[allow(dead_code)]
     pub thinking: Option<Thinking>,
     pub fast_mode: Option<bool>,
     #[allow(dead_code)]
@@ -87,5 +88,6 @@ pub struct Effort {
 
 #[derive(Deserialize, Default)]
 pub struct Thinking {
+    #[allow(dead_code)]
     pub enabled: Option<bool>,
 }
