@@ -12,23 +12,26 @@
 ## 长这样
 
 ```
- user   ~/path/to/project   main *   Opus 4.7 (1M context)  effort:xhigh  thinking
-ctx 207.2K/1.00M ██░░░░░░░░  21.0% | in 139  out 119.3K  cache 16.66M  | $8.83 (+1831 -447)
+ user   ~/path/to/project   main *   Opus 4.7 (1M context)  effort:xhigh  ccpulse: v0.1.2
+ctx 207.2K/1.00M ██░░░░░░░░  21.0% | in 139  out 119.3K  cache 16.66M  | $8.83
 5h █░░░░░░░░░   6.0% reset 04-24 15:20 (3h16m)  |  7d ░░░░░░░░░░   1.0% reset 04-26 02:00 (1d13h)
 ```
 
 逐行说:
 
 - **第一行**:用户名、当前目录、git 分支(脏工作区会带 `*`)、模型显示
-  名。会话设了 effort、thinking、fast 模式的话也会接在后面。
+  名。会话设了 effort 或 fast 模式的话会接在后面。行末是当前二进制版本
+  号(详见下面的更新检测)。
 - **第二行**:上下文窗口占用(带小进度条和百分比),后面是会话累积的
-  输入 / 输出 / 缓存 token、当前花费(美元)、改动行数(碰过文件才显示)。
+  输入 / 输出 / 缓存 token,以及 Claude Code 报的当前会话花费(美元)。
 - **第三行**:当前 5 小时 / 7 天配额已用百分比,以及窗口重置时间。两组
   数都是 Claude Code 自己算好交给我们的,无需任何配置。
 
+百分比按阈值上色:小于 60% 绿、60% 到 80% 黄、80% 及以上红。
+
 第一行末尾的版本号是当前运行的二进制版本。每 6 小时 ccpulse 会异步起一个
-`curl` 查 GitHub 上最新 release,如果有更新就在版本号后面加箭头和新版本
-(`v0.1.0 → v0.2.0`)。检查全程不阻塞渲染。
+`curl` 查 GitHub 上最新 release,如果有更新就在版本号后面加黄色箭头和新
+版本号(`ccpulse: v0.1.0 → v0.1.2`)。检查全程不阻塞渲染。
 
 ## 安装
 
@@ -85,7 +88,7 @@ cargo install --git https://github.com/asm2apex/ccpulse
 
 1. 读 Claude Code 从 stdin 发的 JSON。新版本(2.1.x)已经把 rate-limit
    窗口、上下文窗口大小和百分比、本轮 token 拆分、累计花费、effort /
-   thinking / fast 模式标志都直接送过来了,我们就直接拿来用。
+   fast 模式标志都直接送过来了,我们就直接拿来用。
 2. 把当前会话的 transcript JSONL 流式扫一遍,补上累计 cache_creation /
    cache_read 总数 — 这部分 stdin 里没有,但显示在状态栏里挺有用。
    `CCPULSE_NO_TRANSCRIPT=1` 可以跳过。

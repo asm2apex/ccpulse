@@ -14,27 +14,32 @@ prints three lines.
 ## What it shows
 
 ```
- user   ~/path/to/project   main *   Opus 4.7 (1M context)  effort:xhigh  thinking
-ctx 207.2K/1.00M ██░░░░░░░░  21.0% | in 139  out 119.3K  cache 16.66M  | $8.83 (+1831 -447)
+ user   ~/path/to/project   main *   Opus 4.7 (1M context)  effort:xhigh  ccpulse: v0.1.2
+ctx 207.2K/1.00M ██░░░░░░░░  21.0% | in 139  out 119.3K  cache 16.66M  | $8.83
 5h █░░░░░░░░░   6.0% reset 04-24 15:20 (3h16m)  |  7d ░░░░░░░░░░   1.0% reset 04-26 02:00 (1d13h)
 ```
 
 Line by line:
 
 - **Line 1** — user, current directory, git branch (`*` when dirty), model
-  display name. If the session has an effort level, thinking, or fast mode
-  set, those follow.
+  display name. The effort level and fast-mode flag follow when the
+  session has them set. The end of the line carries the binary version
+  (see the update check below).
 - **Line 2** — context window usage with a small bar and percentage, then
-  the session's cumulative input / output / cache tokens, the running cost
-  in USD, and lines added/removed (when the session has touched files).
+  the session's cumulative input / output / cache tokens, and the running
+  cost in USD as Claude Code reports it.
 - **Line 3** — current 5-hour and 7-day usage as a percentage of your
-  Anthropic quota, and the timestamp each window resets at. Both values
-  come from Claude Code itself — there's nothing to configure.
+  Anthropic quota, plus when each window resets. Both values come from
+  Claude Code itself — there's nothing to configure.
+
+Percentages are color-coded: green below 60%, yellow from 60% up to 80%,
+red at 80% and above.
 
 The version printed at the end of line 1 is the running binary's version.
 Once every 6 hours ccpulse spawns a detached `curl` to check the latest
 release on GitHub; if a newer tag exists, an arrow and the new version
-appear next to it (`v0.1.0 → v0.2.0`). The check never blocks the render.
+appear next to it in yellow (`ccpulse: v0.1.0 → v0.1.2`). The check never
+blocks the render.
 
 ## Install
 
@@ -94,7 +99,7 @@ Every render, ccpulse:
 1. Reads the JSON Claude Code sends on stdin. Recent versions (2.1.x)
    already include the rate-limit windows, the context window size and
    percentage, the per-turn token breakdown, the running cost, and the
-   effort / thinking / fast-mode flags. ccpulse uses these directly.
+   effort / fast-mode flags. ccpulse uses these directly.
 2. Streams the active session's transcript JSONL once to recover the
    cumulative cache_creation / cache_read totals — these aren't in the
    stdin payload but are useful to see at a glance. Skip the scan with
