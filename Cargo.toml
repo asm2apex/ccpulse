@@ -1,0 +1,25 @@
+[package]
+name = "ccpulse"
+version = "0.1.0"
+edition = "2021"
+authors = ["asm2apex"]
+description = "Statusline for Claude Code: model, tokens, context window, and 5h/7d quota usage"
+license = "MIT"
+repository = "https://github.com/asm2apex/ccpulse"
+homepage = "https://github.com/asm2apex/ccpulse"
+keywords = ["claude", "claude-code", "statusline", "cli", "tokens"]
+categories = ["command-line-utilities"]
+readme = "README.md"
+rust-version = "1.74"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
