@@ -3,7 +3,7 @@ use std::fmt::Write;
 
 use crate::git;
 use crate::input::Input;
-use crate::transcript::{collect_records, scan_session, window_cost};
+use crate::transcript::scan_session;
 use crate::util::{env_bool, fmt_duration, fmt_tokens, home_dir, now_secs};
 
 const RESET: &str = "\x1b[0m";
@@ -213,19 +213,12 @@ pub fn render(input: &Input) -> String {
     let five = rl.and_then(|r| r.five_hour.as_ref());
     let seven = rl.and_then(|r| r.seven_day.as_ref());
     if five.is_some() || seven.is_some() {
-        let records = if env_bool("CCPULSE_NO_TRANSCRIPT") {
-            Vec::new()
-        } else {
-            collect_records()
-        };
-        let cost_5h = window_cost(&records, 5 * 3600, now);
-        let cost_7d = window_cost(&records, 7 * 86400, now);
         let mut parts: Vec<String> = Vec::new();
         if let Some(w) = five {
-            parts.push(fmt_window("5h", w, now, cost_5h));
+            parts.push(fmt_window("5h", w, now));
         }
         if let Some(w) = seven {
-            parts.push(fmt_window("7d", w, now, cost_7d));
+            parts.push(fmt_window("7d", w, now));
         }
         let sep = format!("  {}|{}  ", DIM, RESET);
         out.push_str(&parts.join(&sep));
@@ -240,7 +233,7 @@ pub fn render(input: &Input) -> String {
     out
 }
 
-fn fmt_window(label: &str, w: &crate::input::RateLimitWindow, now: i64, cost_usd: f64) -> String {
+fn fmt_window(label: &str, w: &crate::input::RateLimitWindow, now: i64) -> String {
     let pct = w.used_percentage.unwrap_or(0.0);
     let c = color_pct(pct);
     let mut s = format!(
@@ -255,9 +248,6 @@ fn fmt_window(label: &str, w: &crate::input::RateLimitWindow, now: i64, cost_usd
         pct,
         RESET
     );
-    if cost_usd > 0.0 {
-        let _ = write!(s, " {}\u{0024}{:.2}{}", DIM, cost_usd, RESET);
-    }
     if let Some(reset_ts) = w.resets_at {
         let remaining = reset_ts - now;
         if remaining > 0 {
